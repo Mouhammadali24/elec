@@ -4,7 +4,7 @@
 title = CircleCalc
 package.name = elec
 package.domain = org.mouhammadali24
-version = 1.0.0       # رقم نسخة التطبيق
+version = 1.0.0
 
 # ملفات المشروع
 source.dir = .

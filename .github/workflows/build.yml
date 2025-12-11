@@ -9,6 +9,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      ANDROID_HOME: ${{ runner.temp }}/android-sdk
+      PATH: ${{ runner.temp }}/android-sdk/cmdline-tools/latest/bin:${{ runner.temp }}/android-sdk/platform-tools:${{ runner.temp }}/android-sdk/tools/bin:$PATH
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
@@ -16,14 +20,18 @@ jobs:
     - name: Install system dependencies
       run: |
         sudo apt update
-        sudo apt install -y python3 python3-pip git zip unzip openjdk-17-jdk
+        sudo apt install -y python3 python3-pip git zip unzip openjdk-17-jdk wget
         pip install --upgrade pip cython buildozer
 
-    - name: Initialize Buildozer & Download Python-for-Android
+    - name: Install Android SDK Build-tools
       run: |
-        mkdir -p .buildozer
-        # يقوم بتنزيل Python-for-Android والـ SDK/NDK
-        buildozer android update
+        mkdir -p $ANDROID_HOME/cmdline-tools
+        cd $ANDROID_HOME/cmdline-tools
+        wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline-tools.zip
+        unzip cmdline-tools.zip
+        mv cmdline-tools latest
+        yes | sdkmanager --licenses
+        sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
 
     - name: Build APK
       run: |
