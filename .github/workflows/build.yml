@@ -30,10 +30,8 @@ jobs:
         unzip cmdline-tools.zip
         mv cmdline-tools latest
 
-        # قبول كل الترخيصات
         yes | sdkmanager --licenses
 
-        # تثبيت إصدار Build-tools ثابت
         sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
 
     - name: Build APK
