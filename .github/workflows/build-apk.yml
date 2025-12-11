@@ -10,7 +10,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      HOME: /home/runner   # ✅ إصلاح المسار
+      HOME: /home/runner
+      BUILDOZER_HOME: /home/runner/.buildozer   # إصلاح المسار
 
     steps:
       - name: Checkout repository
