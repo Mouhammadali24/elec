@@ -1,8 +1,8 @@
 [app]
 
 title = CircleCalc
-package.name = circlecalc
-package.domain = org.example
+package.name = elec
+package.domain = org.mouhammadali24
 source.dir = .
 source.include_exts = py,kv,png,jpg,ttf
 requirements = python3,kivy==2.3.0,kivymd
@@ -14,15 +14,13 @@ android.minapi = 21
 android.permissions = INTERNET
 android.archs = arm64-v8a, armeabi-v7a
 
-# أيقونة التطبيق (اختياري)
+# أيقونة التطبيق
 icon.filename = icon.png
 
+# صورة البداية
 presplash.filename = splash.png
 presplash.keep_ratio = 1
 presplash_color = white
-
-# الخطوط
-android.presplash_color = white
 
 [buildozer]
 log_level = 2
