@@ -1,48 +1,57 @@
-name: Build Kivy APK
+name: Build APK
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      HOME: /home/runner
+      ANDROID_HOME: /home/runner/.buildozer/android/platform/android-sdk
+      BUILDOZER_HOME: /home/runner/.buildozer
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Install system dependencies
-      run: |
-        sudo apt update
-        sudo apt install -y python3 python3-pip git zip unzip openjdk-17-jdk wget
-        pip install --upgrade pip cython buildozer
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
 
-    - name: Install Android SDK Build-tools
-      run: |
-        export ANDROID_HOME=$PWD/android-sdk
-        export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y python3-pip python3-setuptools git openjdk-17-jdk unzip zip libssl-dev libffi-dev libsqlite3-dev
+          pip install --upgrade pip
+          pip install buildozer cython wheel
 
-        mkdir -p $ANDROID_HOME/cmdline-tools
-        cd $ANDROID_HOME/cmdline-tools
-        wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline-tools.zip
-        unzip cmdline-tools.zip
-        mv cmdline-tools latest
+      - name: Install Android Command Line Tools
+        run: |
+          mkdir -p $ANDROID_HOME/cmdline-tools
+          cd $ANDROID_HOME/cmdline-tools
+          curl -o commandlinetools.zip https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
+          unzip -q commandlinetools.zip
+          mv cmdline-tools latest
+          # ✅ إصلاح المسار: أنشئ رابط رمزي لمجلد tools/bin
+          ln -s $ANDROID_HOME/cmdline-tools/latest $ANDROID_HOME/tools
+          export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
+          # ✅ قبول الرخصة
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses --sdk_root=$ANDROID_HOME
+          # ✅ تثبيت نسخ مستقرة من build-tools
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME "platform-tools" "build-tools;30.0.3" "build-tools;33.0.2" "platforms;android-30" "platforms;android-33"
 
-        yes | sdkmanager --licenses
+      - name: Build APK (Release)
+        run: |
+          export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
+          buildozer android release
 
-        sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
-
-    - name: Build APK
-      run: |
-        export ANDROID_HOME=$PWD/android-sdk
-        export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
-
-        buildozer android debug
-
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: elec-apk
-        path: bin/*.apk
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: apk-release
+          path: bin/*.apk
