@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       HOME: /home/runner
-      BUILDOZER_HOME: /home/runner/.buildozer   # إصلاح المسار
+      BUILDOZER_HOME: /home/runner/.buildozer
 
     steps:
       - name: Checkout repository
@@ -28,6 +28,10 @@ jobs:
           sudo apt install -y python3-pip python3-setuptools git openjdk-17-jdk unzip zip libssl-dev libffi-dev libsqlite3-dev
           pip install --upgrade pip
           pip install buildozer cython wheel
+
+      - name: Install Android SDK Build-Tools
+        run: |
+          yes | sdkmanager --sdk_root=$HOME/.buildozer/android/platform/android-sdk "platform-tools" "build-tools;33.0.2" "platforms;android-33"
 
       - name: Build APK (Release)
         run: |
