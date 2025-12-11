@@ -1,13 +1,23 @@
 [app]
 
+# معلومات التطبيق
 title = CircleCalc
 package.name = elec
 package.domain = org.mouhammadali24
+version = 1.0.0       # رقم نسخة التطبيق
+
+# ملفات المشروع
 source.dir = .
 source.include_exts = py,kv,png,jpg,ttf
+
+# المتطلبات
 requirements = python3,kivy==2.3.0,kivymd
+
+# إعدادات العرض
 orientation = portrait
 fullscreen = 0
+
+# إعدادات أندرويد
 android.api = 33
 android.ndk = 25b
 android.minapi = 21
