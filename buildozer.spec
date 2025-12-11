@@ -21,8 +21,8 @@ fullscreen = 0
 android.api = 33
 android.ndk = 25b
 android.minapi = 21
-android.permissions = INTERNET
 android.archs = arm64-v8a, armeabi-v7a
+android.build_tools_version = 33.0.2   # ✅ استخدم هذا الإصدار الثابت
 
 # أيقونة التطبيق
 icon.filename = icon.png
